@@ -1,0 +1,58 @@
+name: Build Artifacts
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+
+  create-release:
+    name: Create Release
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Source
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # To ensure we have all tags        
+
+      - name: Get the Newest Tag
+        id: newest-tag
+        run: |
+          echo "version=`git tag --list "v[0-9]*.[0-9]*.[0-9]*" --sort=-v:refname | head -n1 | cut -c2-`" >> "$GITHUB_OUTPUT"    
+
+      - name: Checkout test-receivert
+        uses: actions/checkout@v3
+        with:
+          repository: "https://github.com/jagedn/test-receiver"
+          path: test-receiver-tmp
+
+      - name: Add release metadata
+        id: add-metadata
+        run: |
+          echo $(date) >> test-receiver-tmp/list.json
+
+      - name: Commit File
+        uses: dmnemec/copy_file_to_another_repo_action@v1.1.1
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          source_file: "${{ github.workspace }}/artifact/melondsds_libretro-linux-x86_64-Release/cores/melondsds_libretro.info"
+          destination_branch_create: "release-v"
+          destination_branch: "master"
+          destination_repo: 'https://github.com/jagedn/test-receiver'
+          destination_folder: ''
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          user_name: 'github-actions[bot]'
+          commit_message: 'Submit new release on behalf of @${{ github.triggering_actor }}'
+
+      - name: Open Pull Request
+        working-directory: test-receiver-tmp
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          git pull
+          git checkout "release-v"
+          gh pr create --fill --repo "jagedn/test-receiver"          
