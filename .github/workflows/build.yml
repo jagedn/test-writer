@@ -41,7 +41,7 @@ jobs:
         with:
           source_file: "${{ github.workspace }}/artifact/melondsds_libretro-linux-x86_64-Release/cores/melondsds_libretro.info"
           destination_branch_create: "release-v"
-          destination_branch: "master"
+          destination_branch: "main"
           destination_repo: 'jagedn/test-receiver'
           destination_folder: ''
           user_email: 'github-actions[bot]@users.noreply.github.com'
