@@ -29,30 +29,13 @@ jobs:
           repository: "jagedn/test-receiver"
           path: test-receiver-tmp
 
-      - name: Add release metadata
-        id: add-metadata
-        run: |
-          echo $(date) >> test-receiver-tmp/list.json
-
-      - name: Commit File
-        uses: dmnemec/copy_file_to_another_repo_action@v1.1.1
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.RELEASE_TOKEN }}
-        with:
-          source_file: "${{ github.workspace }}/test-receiver-tmp/list.json"
-          destination_branch_create: "release-v"
-          destination_branch: "main"
-          destination_repo: 'jagedn/test-receiver'
-          destination_folder: ''
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          user_name: 'github-actions[bot]'
-          commit_message: 'Submit new release on behalf of @${{ github.triggering_actor }}'
-
       - name: Open Pull Request
         working-directory: test-receiver-tmp
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           git pull
-          git checkout "release-v"
+          git checkout -b "release-v"
+          echo $(date) >> test-receiver-tmp/list.json
+          git commit -a -m "add your message"
           gh pr create --fill --repo "jagedn/test-receiver"          
