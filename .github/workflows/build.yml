@@ -37,7 +37,7 @@ jobs:
           
           echo $(date) >> list.json
 
-          git commit --message "probando probando new release"
+          git commit -a --message "probando probando new release"
           git push -u origin HEAD:release-v
           
           gh pr create --fill --repo "jagedn/test-receiver"          
