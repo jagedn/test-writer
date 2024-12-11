@@ -26,7 +26,7 @@ jobs:
       - name: Checkout test-receivert
         uses: actions/checkout@v3
         with:
-          repository: "https://github.com/jagedn/test-receiver"
+          repository: "jagedn/test-receiver"
           path: test-receiver-tmp
 
       - name: Add release metadata
@@ -42,7 +42,7 @@ jobs:
           source_file: "${{ github.workspace }}/artifact/melondsds_libretro-linux-x86_64-Release/cores/melondsds_libretro.info"
           destination_branch_create: "release-v"
           destination_branch: "master"
-          destination_repo: 'https://github.com/jagedn/test-receiver'
+          destination_repo: 'jagedn/test-receiver'
           destination_folder: ''
           user_email: 'github-actions[bot]@users.noreply.github.com'
           user_name: 'github-actions[bot]'
