@@ -39,7 +39,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.RELEASE_TOKEN }}
         with:
-          source_file: "${{ github.workspace }}/artifact/melondsds_libretro-linux-x86_64-Release/cores/melondsds_libretro.info"
+          source_file: "${{ github.workspace }}/test-receiver-tmp/list.json"
           destination_branch_create: "release-v"
           destination_branch: "main"
           destination_repo: 'jagedn/test-receiver'
