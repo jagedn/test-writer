@@ -18,27 +18,26 @@ jobs:
         with:
           fetch-depth: 0 # To ensure we have all tags        
 
-      - name: Get the Newest Tag
-        id: newest-tag
-        run: |
-          echo "version=`git tag --list "v[0-9]*.[0-9]*.[0-9]*" --sort=-v:refname | head -n1 | cut -c2-`" >> "$GITHUB_OUTPUT"    
-
-      - name: Checkout test-receivert
+      - name: Checkout test-receiver
         uses: actions/checkout@v3
         with:
           repository: "jagedn/test-receiver"
           path: test-receiver-tmp
 
       - name: Open Pull Request
-        working-directory: test-receiver-tmp
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
-          git pull
-          git checkout -b "release-v"
-          echo $(date) >> list.json
+          CLONE_DIR=$(mktemp -d)
+          cd "$CLONE_DIR"
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git config user.name 'github-actions[bot]'
-          git commit -a -m "add your message"
-          git push -u origin release-v
+          git clone --single-branch --branch main "https://x-access-token:$RELEASE_TOKEN@$github.com/jagedn/test-receiver.git" "$CLONE_DIR"
+          git checkout -b "release-v"
+          
+          echo $(date) >> list.json
+
+          git commit --message "probando probando new release"
+          git push -u origin HEAD:release-v
+          
           gh pr create --fill --repo "jagedn/test-receiver"          
